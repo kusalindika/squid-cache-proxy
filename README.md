@@ -39,34 +39,33 @@ iptables -t nat -v -L -n --line-number
 
 ## Generate SSL Certificate
 
-To generate the SSL certificate and key file for Squid at /etc/squid/ssl/squid.pem, you can use OpenSSL. This file acts as a Certificate Authority (CA) for Squid’s SSL bumping feature.
+To generate the SSL certificate and key file for Squid at `/etc/squid/ssl/squid.pem`, you can use OpenSSL. This file acts as a Certificate Authority (CA) for Squid’s SSL bumping feature.
 
-Here’s how to generate it:
+**Steps to generate the certificate:**
 
-    1. Create the directory if it doesn’t exist:
+1. **Create the directory if it doesn’t exist:**
 
-    ```bash
-    sudo mkdir -p /etc/squid/ssl
-    ```
+   ```bash
+   sudo mkdir -p /etc/squid/ssl
+   ```
 
-    2. Generate a new private key and self-signed CA certificate (valid for 10 years), and combine them into squid.pem:
+2. **Generate a new private key and self-signed CA certificate (valid for 10 years), and combine them into `squid.pem`:**
 
-    ```bash
-    sudo openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 \
-    -keyout /etc/squid/ssl/squid.key \
-    -out /etc/squid/ssl/squid.crt \
-    -subj "/C=US/ST=State/L=City/O=Organization/CN=SquidProxyCA"
+   ```bash
+   sudo openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 \
+     -keyout /etc/squid/ssl/squid.key \
+     -out /etc/squid/ssl/squid.crt \
+     -subj "/C=US/ST=State/L=City/O=Organization/CN=SquidProxyCA"
 
+   sudo cat /etc/squid/ssl/squid.key /etc/squid/ssl/squid.crt | sudo tee /etc/squid/ssl/squid.pem > /dev/null
+   ```
 
-    sudo cat /etc/squid/ssl/squid.key /etc/squid/ssl/squid.crt | sudo tee /etc/squid/ssl/squid.pem > /dev/null
-    ```
+3. **Set the correct permissions:**
 
-    3. Set the correct permissions:
-
-    ```bash
-    sudo chmod 600 /etc/squid/ssl/squid.pem
-    sudo chown squid:squid /etc/squid/ssl/squid.pem
-    ```
+   ```bash
+   sudo chmod 600 /etc/squid/ssl/squid.pem
+   sudo chown squid:squid /etc/squid/ssl/squid.pem
+   ```
 
 ## Whitelisting Domains for Proxy Access
 
