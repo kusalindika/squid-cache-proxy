@@ -30,10 +30,14 @@ This project uses Squid 🦑 as a proxy to manage DNS-filtered firewall rules, s
 
 ```bash
 #!/bin/bash
+# Redirect HTTP traffic (port 80) to Squid's transparent proxy port 3129
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3129
+# Redirect HTTPS traffic (port 443) to Squid's SSL bump port 3130
 sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 3130
+# Block ICMP timestamp requests and replies for security
 sudo iptables -A INPUT -p icmp --icmp-type timestamp-request -j DROP
 sudo iptables -A OUTPUT -p icmp --icmp-type timestamp-reply -j DROP
+# List current NAT table rules with line numbers
 iptables -t nat -v -L -n --line-number
 ```
 
