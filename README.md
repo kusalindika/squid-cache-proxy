@@ -90,3 +90,26 @@ mycompany.com
 ```
 
 Only domains listed in this file will be accessible through the proxy.
+
+## Squid Proxy Architecture Diagram
+
+```mermaid
+graph TD
+    Client((Client))
+    Internet((Internet))
+    subgraph Squid Proxy Server
+        SQUID["Squid Proxy\n(squid.conf)"]
+        IPTABLES["iptables.sh\n(Port 80→3129, 443→3130)"]
+        WHITELIST["/etc/squid/whitelist.conf\n(Domain Whitelist)"]
+        SSL["SSL Bump\n(/etc/squid/ssl/squid.pem)"]
+    end
+
+    Client -- HTTP/HTTPS --> IPTABLES
+    IPTABLES -- Redirected Traffic --> SQUID
+    SQUID -- Checks ACLs & Whitelist --> WHITELIST
+    SQUID -- SSL Bump (if HTTPS) --> SSL
+    SQUID -- Allowed Domains --> Internet
+    SQUID -.->|Blocked| X["Access Denied"]
+```
+
+This diagram shows how client traffic is transparently redirected to Squid, filtered by domain whitelist, and optionally SSL-bumped before being allowed to the internet.
